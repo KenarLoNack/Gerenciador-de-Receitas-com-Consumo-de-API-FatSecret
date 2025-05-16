@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'addRecipe.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,7 +29,22 @@ class ListaDeBotoes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Lista de Botões Personalizados')),
+      appBar: AppBar(
+        title: Text('Lista de Botões Personalizados'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Addrecipe(),
+                ),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),
+        ],
+      ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
         itemCount: titulos.length,
@@ -111,18 +127,17 @@ class ListaDeBotoes extends StatelessWidget {
                               Text('20 min'),
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 0, left: 100),
-                            child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: IconButton(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.star_border_rounded,
                                   size: 35,
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
