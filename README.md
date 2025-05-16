@@ -1,4 +1,4 @@
-# recipes_app_api
+# Recipe Manager
 
 Um APP para o usuario criar suas proprias receitas sem muito trabalho, o app faz a consulta dos ingredientes na API do FatSecret e faz o calculo automaticamente dos macronutrientes da receita.
 
