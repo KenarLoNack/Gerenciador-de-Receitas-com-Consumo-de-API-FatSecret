@@ -13,6 +13,14 @@ class Addrecipe extends StatelessWidget {
     final TextEditingController tempoController = TextEditingController();
     final TextEditingController porcoesController = TextEditingController();
     final TextEditingController preparoController = TextEditingController();
+    final List ingredientes = [
+      "item 1",
+      "item 2",
+      "item 1",
+      "item 2",
+      "item 1",
+      "item 2"
+    ];
 
     tempoController.text = "00:00";
     porcoesController.text = "1"; // valor inicial para porções
@@ -200,6 +208,43 @@ class Addrecipe extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     //lista de ingredientes
+
+                    Container(
+                      height: 100,
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(width: 1, color: Colors.black),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Usa Expanded aqui para garantir que o conteúdo da esquerda ocupe espaço flexível
+                          Expanded(
+                            child: ingredientes.isEmpty
+                                ? Center(
+                                    child: Text(
+                                      "Adicionar ingredientes",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: ingredientes.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Text(ingredientes[index]),
+                                        onTap: () {},
+                                      );
+                                    },
+                                  ),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.add),
+                          ),
+                        ],
+                      ),
+                    ),
 
                     SizedBox(height: 12),
                     TextFormField(
