@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
+import 'addingredient.dart';
 
 class Addrecipe extends StatelessWidget {
   const Addrecipe({super.key});
@@ -210,17 +211,18 @@ class Addrecipe extends StatelessWidget {
                     //lista de ingredientes
 
                     Container(
-                      height: 100,
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(width: 1, color: Colors.black),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Usa Expanded aqui para garantir que o conteúdo da esquerda ocupe espaço flexível
-                          Expanded(
+                    height: 100,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(width: 1, color: Colors.black),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: Colors.transparent,
+                            clipBehavior: Clip.hardEdge,
                             child: ingredientes.isEmpty
                                 ? Center(
                                     child: Text(
@@ -233,19 +235,28 @@ class Addrecipe extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       return ListTile(
                                         title: Text(ingredientes[index]),
-                                        onTap: () {},
+                                        onTap: () {
+                                          print('Clicou no item $index');
+                                        },
                                       );
                                     },
                                   ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.add),
-                          ),
-                        ],
-                      ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => Addingredient(),
+                  ),
+                );
+                          },
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
                     ),
-
+                  ),
                     SizedBox(height: 12),
                     TextFormField(
                       controller: preparoController,

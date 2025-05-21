@@ -30,7 +30,7 @@ class ListaDeBotoes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Botões Personalizados'),
+        title: Text('Lista de Receitas'),
         actions: [
           IconButton(
             onPressed: () {
