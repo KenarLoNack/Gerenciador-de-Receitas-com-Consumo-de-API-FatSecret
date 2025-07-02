@@ -15,6 +15,7 @@ class _AddingredientState extends State<Addingredient> {
     return Scaffold(
       appBar: AppBar(
         title: Text(""),
+        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.add)),],
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -42,6 +43,14 @@ class _AddingredientState extends State<Addingredient> {
             itemBuilder: (context, index) {
               return ListTile(title: Text(ingredientes[index]),);
             },),),
+            Expanded(child: Stack(
+              children: [
+                Positioned(
+                  bottom: 30,
+                  right: 30,
+                  child: ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Icon(Icons.check)),),
+              ],
+            ),)
           ],
         ),
     );
