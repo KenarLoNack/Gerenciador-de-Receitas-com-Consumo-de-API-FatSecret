@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'bancosqflite.dart';
 import 'addrecipe.dart';
 
 void main() => runApp(MyApp());
@@ -12,19 +14,43 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ListaDeBotoes extends StatelessWidget {
+class ListaDeBotoes extends StatefulWidget {
+  const ListaDeBotoes({super.key});
+
+  @override
+  State<ListaDeBotoes> createState() => _ListaDeBotoesState();
+}
+
+class _ListaDeBotoesState extends State<ListaDeBotoes> {
+  late Database db;
   final List<String> titulos = [
     'Bolinho de Frango com batata',
     'Página B',
     'Página C'
   ];
+
   final List<String> imagens = [
     'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
     'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
     'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
   ];
+  List<Map<String, dynamic>> receitas = [];
+  bool carregando = true;
 
-  ListaDeBotoes({super.key});
+  @override
+  void initState() {
+    super.initState();
+    carregarReceitas();
+  }
+
+  Future<void> carregarReceitas() async {
+    db = await inicializarBanco();
+    final resultado = await db.query('receitas'); // nome da sua tabela
+    setState(() {
+      receitas = resultado;
+      carregando = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
