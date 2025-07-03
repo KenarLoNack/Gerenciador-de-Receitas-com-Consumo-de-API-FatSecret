@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:recipes_app_api/bancosqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class Addingredient extends StatefulWidget {
- const Addingredient({super.key});
+  const Addingredient({super.key});
 
   @override
   State<Addingredient> createState() => _AddingredientState();
@@ -17,57 +18,75 @@ class _AddingredientState extends State<Addingredient> {
     carregarIngredientes();
   }
 
-  Future<void> carregarIngredientes() async{
-    final resultado = await db.query('ingredientes',columns: ['nome']);
+  Future<void> carregarIngredientes() async {
+    db = await BancoHelper().database;
+    final resultado = await db.query('ingredientes', columns: ['nome']);
 
     setState(() {
       ingredientes = resultado;
     });
   }
+
   final TextEditingController searchIng = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(""),
-        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.add)),],
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+        ],
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back),
         ),
-        ),
-        body: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(child: TextField(
-              autofocus: true,
-              controller: searchIng,
-              decoration: InputDecoration(
-              labelText: "Pesquisar Ingrediente",
-              border: OutlineInputBorder(),
+      ),
+      body: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  autofocus: true,
+                  controller: searchIng,
+                  decoration: InputDecoration(
+                    labelText: "Pesquisar Ingrediente",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              Icon(Icons.search),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: ingredientes.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(ingredientes[index]['nome']),
+                );
+              },
             ),
-
-            ),),
-            Icon(Icons.search),
-              ],
-            ),
-            Expanded(child: ListView.builder(itemCount: ingredientes.length,
-            itemBuilder: (context, index) {
-              return ListTile(title: Text(ingredientes[index]['nome']),);
-            },),),
-            Expanded(child: Stack(
+          ),
+          Expanded(
+            child: Stack(
               children: [
                 Positioned(
                   bottom: 30,
                   right: 30,
-                  child: ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Icon(Icons.check)),),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.check)),
+                ),
               ],
-            ),)
-          ],
-        ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

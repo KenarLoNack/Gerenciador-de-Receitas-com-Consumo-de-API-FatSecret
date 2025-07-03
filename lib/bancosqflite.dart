@@ -24,8 +24,10 @@ class BancoHelper {
   Future<Database> _inicializarBanco() async {
     if (kIsWeb) {
       databaseFactory = databaseFactoryFfiWeb;
-      print("object");
-      return openDatabase('BancoTeste.db');
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, 'BancoTeste.db');
+
+      return openDatabase(path);
     } else {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'BancoTeste.db');
