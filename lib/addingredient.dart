@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 class Addingredient extends StatefulWidget {
  const Addingredient({super.key});
@@ -8,7 +9,21 @@ class Addingredient extends StatefulWidget {
 }
 
 class _AddingredientState extends State<Addingredient> {
-  final List ingredientes = ["item 1","item 1","item 1","item 1","item 1",];
+  late Database db;
+  List<Map<String, dynamic>> ingredientes = [];
+  @override
+  void initState() {
+    super.initState();
+    carregarIngredientes();
+  }
+
+  Future<void> carregarIngredientes() async{
+    final resultado = await db.query('ingredientes',columns: ['nome']);
+
+    setState(() {
+      ingredientes = resultado;
+    });
+  }
   final TextEditingController searchIng = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -41,7 +56,7 @@ class _AddingredientState extends State<Addingredient> {
             ),
             Expanded(child: ListView.builder(itemCount: ingredientes.length,
             itemBuilder: (context, index) {
-              return ListTile(title: Text(ingredientes[index]),);
+              return ListTile(title: Text(ingredientes[index]['nome']),);
             },),),
             Expanded(child: Stack(
               children: [

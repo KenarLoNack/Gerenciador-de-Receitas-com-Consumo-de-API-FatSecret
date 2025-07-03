@@ -8,7 +8,7 @@ class Addrecipe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     final TextEditingController nomeController = TextEditingController();
     final TextEditingController tempoController = TextEditingController();
@@ -51,7 +51,7 @@ class Addrecipe extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(16),
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   children: [
                     TextFormField(
@@ -296,7 +296,7 @@ class Addrecipe extends StatelessWidget {
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                        if (formKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Receita cadastrada com sucesso!'),

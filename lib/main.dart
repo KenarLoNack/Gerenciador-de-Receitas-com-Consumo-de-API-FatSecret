@@ -44,12 +44,13 @@ class _ListaDeBotoesState extends State<ListaDeBotoes> {
   }
 
   Future<void> carregarReceitas() async {
-    db = await inicializarBanco();
-    final resultado = await db.query('receitas'); // nome da sua tabela
-    setState(() {
-      receitas = resultado;
-      carregando = false;
-    });
+    db = await BancoHelper().database;
+    // final resultado = await db.query('receitas'); // nome da sua tabela
+    // setState(() {
+    //   receitas = resultado;
+    //   carregando = false;
+    // });
+    // print(receitas);
   }
 
   @override

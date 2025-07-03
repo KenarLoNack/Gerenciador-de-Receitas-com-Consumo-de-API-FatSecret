@@ -1,26 +1,46 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 
-Future<Database> inicializarBanco() async {
-  final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'seubanco.db');
+class BancoHelper {
+  static final BancoHelper _instance = BancoHelper._internal();
+  Database? _database;
 
-  // Verifica se o banco já existe
-  final exists = await databaseExists(path);
-
-  if (!exists) {
-    // Copia o banco do assets
-    final data = await rootBundle.load('assets/banco/seubanco.db');
-    final bytes = data.buffer.asUint8List();
-
-    await File(path).writeAsBytes(bytes, flush: true);
-    print('Banco copiado com sucesso!');
-  } else {
-    print('Banco já existe!');
+  factory BancoHelper() {
+    return _instance;
   }
 
-  // Abre o banco
-  return openDatabase(path);
+  BancoHelper._internal();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _inicializarBanco();
+    return _database!;
+  }
+
+  Future<Database> _inicializarBanco() async {
+    if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+      print("object");
+      return openDatabase('BancoTeste.db');
+    } else {
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, 'BancoTeste.db');
+
+      final exists = await databaseExists(path);
+      if (!exists) {
+        final data = await rootBundle.load('assets/banco/BancoTeste.db');
+        final bytes = data.buffer.asUint8List();
+        await File(path).writeAsBytes(bytes, flush: true);
+        print('Banco copiado!');
+      } else {
+        print('Banco já existe!');
+      }
+
+      return openDatabase(path);
+    }
+  }
 }
