@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // <- necessário para desktop
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart'; // <- necessário para web
@@ -85,33 +84,32 @@ class BancoHelper {
     );
   }
 
-  Future<void> inserirDados(String nome, double calorias, double? carboidratos, double? proteinas, double? gordTotal, double? gordSat, 
-  double? gordTrans, double? fibras, double? sodio, double? acuTot, double? acucarAdic) async{
+  Future<void> inserirDadosIngred(
+      String nome,
+      double calorias,
+      double carboidratos,
+      double proteinas,
+      double gordTotal,
+      double gordSat,
+      double? gordTrans,
+      double fibras,
+      double? sodio,
+      double acuTot,
+      double acucarAdic) async {
     final db = await database;
-
-    final carb = carboidratos ?? 0;
-    final prot = proteinas ?? 0;
-    final gordT = gordTotal ?? 0;
-    final gordSatu = gordSat ?? 0;
-    final gordTr = gordTrans ?? 0;
-    final fibra = fibras ?? 0;
-    final sdio = sodio ?? 0;   // Atenção: 'sodio' no parâmetro e 'sodio' na variável local geram conflito, use outro nome para variável local
-    final acucT = acuTot ?? 0;
-    final acucAdd = acucarAdic ?? 0;
-
 
     db.insert('ingredientes', {
       'nome': nome,
       'calorias': calorias,
-      'carboidratos': carb,
-      'proteinas': prot,
-      'gorduras_total': gordT,
-      'gorduras_saturadas': gordSatu,
-      'gorduras_trans': gordTr,
-      'fibras': fibra,
-      'sodio': sdio,
-      'acucares_total': acucT,
-      'acucares_adicionados': acucAdd,
+      'carboidratos': carboidratos,
+      'proteinas': proteinas,
+      'gorduras_total': gordTotal,
+      'gorduras_saturadas': gordSat,
+      'gorduras_trans': gordTrans,
+      'fibras': fibras,
+      'sodio': sodio,
+      'acucares_total': acuTot,
+      'acucares_adicionados': acucarAdic,
     });
   }
 }

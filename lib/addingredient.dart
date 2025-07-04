@@ -13,6 +13,7 @@ class Addingredient extends StatefulWidget {
 class _AddingredientState extends State<Addingredient> {
   late Database db;
   List<Map<String, dynamic>> ingredientes = [];
+  List<Map<String, dynamic>> selecionados = [];
   @override
   void initState() {
     super.initState();
@@ -21,7 +22,7 @@ class _AddingredientState extends State<Addingredient> {
 
   Future<void> carregarIngredientes() async {
     db = await BancoHelper().database;
-    final resultado = await db.query('ingredientes', columns: ['nome']);
+    final resultado = await db.query('ingredientes', columns: ['id', 'nome']);
 
     setState(() {
       ingredientes = resultado;
@@ -35,9 +36,18 @@ class _AddingredientState extends State<Addingredient> {
       appBar: AppBar(
         title: Text(""),
         actions: [
-          IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => Createingredient(),
-                ),);}, icon: Icon(Icons.add)),
+          IconButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => Createingredient(),
+                  ),
+                );
+
+                await carregarIngredientes();
+              },
+              icon: Icon(Icons.add)),
         ],
         leading: IconButton(
           onPressed: () {
@@ -67,8 +77,23 @@ class _AddingredientState extends State<Addingredient> {
             child: ListView.builder(
               itemCount: ingredientes.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(ingredientes[index]['nome']),
+                final ingrediente = ingredientes[index];
+                final nome = ingrediente['nome'] as String;
+                final isSelected =
+                    selecionados.any((item) => item['id'] == ingrediente['id']);
+
+                return CheckboxListTile(
+                  title: Text(nome),
+                  value: isSelected,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        selecionados.add(ingrediente);
+                      } else {
+                        selecionados.remove(ingrediente);
+                      }
+                    });
+                  },
                 );
               },
             ),
@@ -81,7 +106,7 @@ class _AddingredientState extends State<Addingredient> {
                   right: 30,
                   child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context, selecionados);
                       },
                       child: Icon(Icons.check)),
                 ),

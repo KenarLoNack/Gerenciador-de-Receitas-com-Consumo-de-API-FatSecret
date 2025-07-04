@@ -3,9 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'addingredient.dart';
 
-class Addrecipe extends StatelessWidget {
-  const Addrecipe({super.key});
+class Addrecipe extends StatefulWidget {
+  Addrecipe({super.key});
+  List<Map<String, dynamic>> ingredientes = [];
 
+  @override
+  State<Addrecipe> createState() => _AddrecipeState();
+}
+
+class _AddrecipeState extends State<Addrecipe> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
@@ -14,14 +20,6 @@ class Addrecipe extends StatelessWidget {
     final TextEditingController tempoController = TextEditingController();
     final TextEditingController porcoesController = TextEditingController();
     final TextEditingController preparoController = TextEditingController();
-    final List ingredientes = [
-      "item 1",
-      "item 2",
-      "item 1",
-      "item 2",
-      "item 1",
-      "item 2"
-    ];
 
     tempoController.text = "00:00";
     porcoesController.text = "1"; // valor inicial para porções
@@ -211,52 +209,58 @@ class Addrecipe extends StatelessWidget {
                     //lista de ingredientes
 
                     Container(
-                    height: 100,
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(width: 1, color: Colors.black),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Material(
-                            color: Colors.transparent,
-                            clipBehavior: Clip.hardEdge,
-                            child: ingredientes.isEmpty
-                                ? Center(
-                                    child: Text(
-                                      "Adicionar ingredientes",
-                                      style: TextStyle(fontSize: 16),
+                      height: 100,
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(width: 1, color: Colors.black),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Material(
+                              color: Colors.transparent,
+                              clipBehavior: Clip.hardEdge,
+                              child: widget.ingredientes.isEmpty
+                                  ? Center(
+                                      child: Text(
+                                        "Adicionar ingredientes",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: widget.ingredientes.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(widget.ingredientes[index]
+                                              ['nome']),
+                                          onTap: () {
+                                            print('Clicou no item $index');
+                                          },
+                                        );
+                                      },
                                     ),
-                                  )
-                                : ListView.builder(
-                                    itemCount: ingredientes.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(ingredientes[index]),
-                                        onTap: () {
-                                          print('Clicou no item $index');
-                                        },
-                                      );
-                                    },
-                                  ),
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => Addingredient(),
-                  ),
-                );
-                          },
-                          icon: Icon(Icons.add),
-                        ),
-                      ],
+                          IconButton(
+                            onPressed: () async {
+                              final List<Map<String, dynamic>> selectedIng =
+                                  await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => Addingredient(),
+                                ),
+                              );
+
+                              setState(() {
+                                widget.ingredientes = selectedIng;
+                              });
+                            },
+                            icon: Icon(Icons.add),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                     SizedBox(height: 12),
                     TextFormField(
                       controller: preparoController,
