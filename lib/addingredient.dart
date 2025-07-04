@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipes_app_api/bancosqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
+import 'createingredient.dart';
 
 class Addingredient extends StatefulWidget {
   const Addingredient({super.key});
@@ -34,7 +35,9 @@ class _AddingredientState extends State<Addingredient> {
       appBar: AppBar(
         title: Text(""),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+          IconButton(onPressed: () {Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => Createingredient(),
+                ),);}, icon: Icon(Icons.add)),
         ],
         leading: IconButton(
           onPressed: () {
