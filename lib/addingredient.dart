@@ -14,6 +14,11 @@ class _AddingredientState extends State<Addingredient> {
   late Database db;
   List<Map<String, dynamic>> ingredientes = [];
   List<Map<String, dynamic>> selecionados = [];
+  List<TextEditingController> quantidadeControllers = [];
+  List<String> unidadesSelecionadas = [];
+
+  final List<String> opcoesUnidade = ['g', 'ml', 'colher', 'xícara'];
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +56,7 @@ class _AddingredientState extends State<Addingredient> {
         ],
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, <Map<String, dynamic>>[]);
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -82,18 +87,55 @@ class _AddingredientState extends State<Addingredient> {
                 final isSelected =
                     selecionados.any((item) => item['id'] == ingrediente['id']);
 
-                return CheckboxListTile(
-                  title: Text(nome),
-                  value: isSelected,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      if (value == true) {
-                        selecionados.add(ingrediente);
-                      } else {
-                        selecionados.remove(ingrediente);
-                      }
-                    });
-                  },
+                return Row(
+                  children: [
+                    CheckboxListTile(
+                      title: Text(nome),
+                      value: isSelected,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          if (value == true) {
+                            selecionados.add(ingrediente);
+                          } else {
+                            selecionados.remove(ingrediente);
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: quantidadeControllers[index],
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Qtd',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      flex: 2,
+                      child: DropdownButtonFormField<String>(
+                        value: unidadesSelecionadas[index],
+                        onChanged: (valor) {
+                          setState(() {
+                            unidadesSelecionadas[index] = valor!;
+                          });
+                        },
+                        items: opcoesUnidade.map((opcao) {
+                          return DropdownMenuItem(
+                            value: opcao,
+                            child: Text(opcao),
+                          );
+                        }).toList(),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -106,7 +148,11 @@ class _AddingredientState extends State<Addingredient> {
                   right: 30,
                   child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context, selecionados);
+                        if (selecionados.isNotEmpty) {
+                          Navigator.pop(context, selecionados);
+                        } else {
+                          Navigator.pop(context, <Map<String, dynamic>>[]);
+                        }
                       },
                       child: Icon(Icons.check)),
                 ),

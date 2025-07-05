@@ -56,7 +56,7 @@ class BancoHelper {
             CREATE TABLE ingredientes (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               nome TEXT NOT NULL,
-              calorias REAL,
+              calorias REALNOT NULL ,
               carboidratos REAL,
               proteinas REAL,
               gorduras_total REAL,
@@ -91,9 +91,9 @@ class BancoHelper {
       double proteinas,
       double gordTotal,
       double gordSat,
-      double? gordTrans,
+      double gordTrans,
       double fibras,
-      double? sodio,
+      double sodio,
       double acuTot,
       double acucarAdic) async {
     final db = await database;

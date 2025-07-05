@@ -4,14 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'addingredient.dart';
 
 class Addrecipe extends StatefulWidget {
-  Addrecipe({super.key});
-  List<Map<String, dynamic>> ingredientes = [];
+  const Addrecipe({super.key});
 
   @override
   State<Addrecipe> createState() => _AddrecipeState();
 }
 
 class _AddrecipeState extends State<Addrecipe> {
+  List<Map<String, dynamic>> ingredientes = [];
+  List<TextEditingController> quantidadeControllers = [];
+  List<String> unidadesSelecionadas = [];
+
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
@@ -20,6 +23,13 @@ class _AddrecipeState extends State<Addrecipe> {
     final TextEditingController tempoController = TextEditingController();
     final TextEditingController porcoesController = TextEditingController();
     final TextEditingController preparoController = TextEditingController();
+
+    final List<String> opcoesUnidade = [
+      'g',
+      'ml',
+      'colher',
+      'xícara'
+    ]; // customize como quiser
 
     tempoController.text = "00:00";
     porcoesController.text = "1"; // valor inicial para porções
@@ -221,7 +231,7 @@ class _AddrecipeState extends State<Addrecipe> {
                             child: Material(
                               color: Colors.transparent,
                               clipBehavior: Clip.hardEdge,
-                              child: widget.ingredientes.isEmpty
+                              child: ingredientes.isEmpty
                                   ? Center(
                                       child: Text(
                                         "Adicionar ingredientes",
@@ -229,14 +239,62 @@ class _AddrecipeState extends State<Addrecipe> {
                                       ),
                                     )
                                   : ListView.builder(
-                                      itemCount: widget.ingredientes.length,
+                                      itemCount: ingredientes.length,
                                       itemBuilder: (context, index) {
-                                        return ListTile(
-                                          title: Text(widget.ingredientes[index]
-                                              ['nome']),
-                                          onTap: () {
-                                            print('Clicou no item $index');
-                                          },
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(ingredientes[index]
+                                                    ['nome']),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: TextField(
+                                                  controller:
+                                                      quantidadeControllers[
+                                                          index],
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Qtd',
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: DropdownButtonFormField<
+                                                    String>(
+                                                  value: unidadesSelecionadas[
+                                                      index],
+                                                  onChanged: (valor) {
+                                                    setState(() {
+                                                      unidadesSelecionadas[
+                                                          index] = valor!;
+                                                    });
+                                                  },
+                                                  items: opcoesUnidade
+                                                      .map((opcao) {
+                                                    return DropdownMenuItem(
+                                                      value: opcao,
+                                                      child: Text(opcao),
+                                                    );
+                                                  }).toList(),
+                                                  decoration: InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         );
                                       },
                                     ),
@@ -252,9 +310,20 @@ class _AddrecipeState extends State<Addrecipe> {
                                 ),
                               );
 
-                              setState(() {
-                                widget.ingredientes = selectedIng;
-                              });
+                              if (selectedIng.isNotEmpty) {
+                                setState(() {
+                                  ingredientes = selectedIng;
+                                  quantidadeControllers = List.generate(
+                                    ingredientes.length,
+                                    (index) => TextEditingController(),
+                                  );
+                                  unidadesSelecionadas = List.generate(
+                                    ingredientes.length,
+                                    (index) => opcoesUnidade
+                                        .first, // valor inicial: 'g'
+                                  );
+                                });
+                              }
                             },
                             icon: Icon(Icons.add),
                           ),
