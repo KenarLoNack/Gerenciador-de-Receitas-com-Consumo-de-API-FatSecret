@@ -253,44 +253,11 @@ class _AddrecipeState extends State<Addrecipe> {
                                               ),
                                               SizedBox(width: 8),
                                               Expanded(
-                                                flex: 2,
-                                                child: TextField(
-                                                  controller:
-                                                      quantidadeControllers[
-                                                          index],
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Qtd',
-                                                    border:
-                                                        OutlineInputBorder(),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                flex: 2,
-                                                child: DropdownButtonFormField<
-                                                    String>(
-                                                  value: unidadesSelecionadas[
-                                                      index],
-                                                  onChanged: (valor) {
-                                                    setState(() {
-                                                      unidadesSelecionadas[
-                                                          index] = valor!;
-                                                    });
-                                                  },
-                                                  items: opcoesUnidade
-                                                      .map((opcao) {
-                                                    return DropdownMenuItem(
-                                                      value: opcao,
-                                                      child: Text(opcao),
-                                                    );
-                                                  }).toList(),
-                                                  decoration: InputDecoration(
-                                                    border:
-                                                        OutlineInputBorder(),
-                                                  ),
+                                                child: Text(
+                                                  ingredientes[index]
+                                                          ['quantidade'] +
+                                                      Text(ingredientes[index]
+                                                          ['unidade']),
                                                 ),
                                               ),
                                             ],
@@ -313,15 +280,6 @@ class _AddrecipeState extends State<Addrecipe> {
                               if (selectedIng.isNotEmpty) {
                                 setState(() {
                                   ingredientes = selectedIng;
-                                  quantidadeControllers = List.generate(
-                                    ingredientes.length,
-                                    (index) => TextEditingController(),
-                                  );
-                                  unidadesSelecionadas = List.generate(
-                                    ingredientes.length,
-                                    (index) => opcoesUnidade
-                                        .first, // valor inicial: 'g'
-                                  );
                                 });
                               }
                             },

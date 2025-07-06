@@ -14,8 +14,8 @@ class _AddingredientState extends State<Addingredient> {
   late Database db;
   List<Map<String, dynamic>> ingredientes = [];
   List<Map<String, dynamic>> selecionados = [];
-  List<TextEditingController> quantidadeControllers = [];
-  List<String> unidadesSelecionadas = [];
+  Map<int, TextEditingController> quantidadeControllers = {};
+  Map<int, String> unidadesSelecionadas = {};
 
   final List<String> opcoesUnidade = ['g', 'ml', 'colher', 'xícara'];
 
@@ -83,59 +83,105 @@ class _AddingredientState extends State<Addingredient> {
               itemCount: ingredientes.length,
               itemBuilder: (context, index) {
                 final ingrediente = ingredientes[index];
-                final nome = ingrediente['nome'] as String;
-                final isSelected =
-                    selecionados.any((item) => item['id'] == ingrediente['id']);
+                final int id = ingrediente['id'];
+                final String nome = ingrediente['nome'];
+                final isSelected = selecionados.any((item) => item['id'] == id);
 
-                return Row(
-                  children: [
-                    CheckboxListTile(
-                      title: Text(nome),
-                      value: isSelected,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            selecionados.add(ingrediente);
-                          } else {
-                            selecionados.remove(ingrediente);
-                          }
-                        });
-                      },
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      flex: 2,
-                      child: TextField(
-                        controller: quantidadeControllers[index],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: 'Qtd',
-                          border: OutlineInputBorder(),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Checkbox com nome do ingrediente
+                      Expanded(
+                        flex: 3,
+                        child: CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(nome),
+                          value: isSelected,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                selecionados.add(ingrediente);
+                                quantidadeControllers[id] =
+                                    TextEditingController();
+                                unidadesSelecionadas[id] = opcoesUnidade.first;
+                              } else {
+                                selecionados
+                                    .removeWhere((item) => item['id'] == id);
+                                quantidadeControllers.remove(id);
+                                unidadesSelecionadas.remove(id);
+                              }
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      flex: 2,
-                      child: DropdownButtonFormField<String>(
-                        value: unidadesSelecionadas[index],
-                        onChanged: (valor) {
-                          setState(() {
-                            unidadesSelecionadas[index] = valor!;
-                          });
-                        },
-                        items: opcoesUnidade.map((opcao) {
-                          return DropdownMenuItem(
-                            value: opcao,
-                            child: Text(opcao),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
+
+                      // Campo de quantidade
+                      if (isSelected)
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: TextField(
+                              controller: quantidadeControllers[id],
+                              keyboardType: TextInputType.number,
+                              onChanged: (valor) {
+                                final indexSelecionado =
+                                    selecionados.indexWhere((item) =>
+                                        item['id'] == ingrediente['id']);
+                                if (indexSelecionado != -1) {
+                                  setState(() {
+                                    selecionados[indexSelecionado]
+                                        ['quantidade'] = valor;
+                                  });
+                                }
+                              },
+                              readOnly: false,
+                              decoration: InputDecoration(
+                                labelText: 'Qtd',
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
+
+                      // Dropdown de unidades
+                      if (isSelected)
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: DropdownButtonFormField<String>(
+                              value: unidadesSelecionadas[id],
+                              onChanged: (valor) {
+                                final indexSelecionado =
+                                    selecionados.indexWhere((item) =>
+                                        item['id'] == ingrediente['id']);
+                                if (indexSelecionado != -1 && valor != null) {
+                                  setState(() {
+                                    selecionados[indexSelecionado]['unidade'] =
+                                        valor;
+                                  });
+                                }
+                              },
+                              items: opcoesUnidade.map((opcao) {
+                                return DropdownMenuItem(
+                                  value: opcao,
+                                  child: Text(opcao),
+                                );
+                              }).toList(),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 );
               },
             ),
