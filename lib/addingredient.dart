@@ -89,6 +89,25 @@ class _AddingredientState extends State<Addingredient> {
                 final String nome = ingrediente['nome'];
                 final isSelected = selecionados.any((item) => item['id'] == id);
 
+                // Garante que o controller existe
+                final controller = quantidadeControllers.putIfAbsent(
+                    id, () => TextEditingController());
+
+                // Se já estiver selecionado, recupera dados
+                if (isSelected) {
+                  final itemSelecionado =
+                      selecionados.firstWhere((item) => item['id'] == id);
+
+                  // Atualiza texto se for diferente do atual
+                  if (controller.text != itemSelecionado['quantidade']) {
+                    controller.text = itemSelecionado['quantidade'] ?? '';
+                  }
+
+                  // Garante que unidade está setada
+                  unidadesSelecionadas[id] ??=
+                      itemSelecionado['unidade'] ?? opcoesUnidade.first;
+                }
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Row(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
+import 'bancosqflite.dart';
 import 'addingredient.dart';
+
+Map<String, dynamic> dadosformreceita = {};
 
 class Addrecipe extends StatefulWidget {
   const Addrecipe({super.key});
@@ -12,24 +15,23 @@ class Addrecipe extends StatefulWidget {
 
 class _AddrecipeState extends State<Addrecipe> {
   List<Map<String, dynamic>> ingredientes = [];
-  List<TextEditingController> quantidadeControllers = [];
-  List<String> unidadesSelecionadas = [];
+  final TextEditingController nomeController = TextEditingController();
+  final TextEditingController tempoController = TextEditingController();
+  final TextEditingController porcoesController = TextEditingController();
+  final TextEditingController preparoController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController.text = dadosformreceita['nome'] ?? '';
+    tempoController.text = dadosformreceita['tempo'] ?? '';
+    porcoesController.text = dadosformreceita['porcoes'] ?? '';
+    preparoController.text = dadosformreceita['preparo'] ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-
-    final TextEditingController nomeController = TextEditingController();
-    final TextEditingController tempoController = TextEditingController();
-    final TextEditingController porcoesController = TextEditingController();
-    final TextEditingController preparoController = TextEditingController();
-
-    final List<String> opcoesUnidade = [
-      'g',
-      'ml',
-      'colher',
-      'xícara'
-    ]; // customize como quiser
 
     tempoController.text = "00:00";
     porcoesController.text = "1"; // valor inicial para porções
@@ -40,6 +42,7 @@ class _AddrecipeState extends State<Addrecipe> {
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
+            dadosformreceita.clear();
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -243,13 +246,20 @@ class _AddrecipeState extends State<Addrecipe> {
                                 ),
                                 IconButton(
                                   onPressed: () async {
+                                    dadosformreceita['nome'] =
+                                        nomeController.text;
+                                    dadosformreceita['tempo'] =
+                                        tempoController.text;
+                                    dadosformreceita['porcoes'] =
+                                        porcoesController.text;
+                                    dadosformreceita['preparo'] =
+                                        preparoController.text;
                                     await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => Addingredient(),
                                       ),
                                     );
-                                    setState(() {});
                                   },
                                   icon: Icon(
                                     Icons.add,
@@ -264,39 +274,35 @@ class _AddrecipeState extends State<Addrecipe> {
                           ),
                           ConstrainedBox(
                             constraints: BoxConstraints(maxHeight: 150),
-                            child: Expanded(
-                              child: Material(
-                                color: Colors.transparent,
-                                clipBehavior: Clip.hardEdge,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: ListView.builder(
-                                    itemCount: selecionados.length,
-                                    itemBuilder: (context, index) {
-                                      return Expanded(
-                                        flex: 3,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              selecionados[index]['nome'],
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              selecionados[index]
-                                                      ['quantidade'] +
-                                                  selecionados[index]
-                                                      ['unidade'],
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
+                            child: Material(
+                              color: Colors.transparent,
+                              clipBehavior: Clip.hardEdge,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
+                                child: ListView.builder(
+                                  itemCount: selecionados.length,
+                                  itemBuilder: (context, index) {
+                                    return Expanded(
+                                      flex: 3,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            selecionados[index]['nome'],
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            selecionados[index]['quantidade'] +
+                                                selecionados[index]['unidade'],
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
@@ -342,14 +348,26 @@ class _AddrecipeState extends State<Addrecipe> {
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (formKey.currentState!.validate()) {
+                          await BancoHelper().inserirReceitas(
+                              nomeController.text,
+                              tempoController.text,
+                              porcoesController.text,
+                              '',
+                              selecionados);
+
+                          selecionados = [];
+
+                          if (!mounted) return;
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Receita cadastrada com sucesso!'),
                             ),
                           );
-                          // Aqui você pode salvar os dados, enviar para o banco, etc.
+                          dadosformreceita.clear();
+                          Navigator.pop(context);
                         }
                       },
                       child: Text("Cadastrar Receita"),

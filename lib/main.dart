@@ -23,13 +23,10 @@ class ListaDeBotoes extends StatefulWidget {
 
 class _ListaDeBotoesState extends State<ListaDeBotoes> {
   late Database db;
-  final List<String> titulos = [
-    'Bolinho de Frango com batata',
-    'Página B',
-    'Página C'
-  ];
 
   final List<String> imagens = [
+    'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
+    'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
     'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
     'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
     'https://eu.ui-avatars.com/api/?name=John+Doe&size=250',
@@ -45,12 +42,9 @@ class _ListaDeBotoesState extends State<ListaDeBotoes> {
 
   Future<void> carregarReceitas() async {
     db = await BancoHelper().database;
-    // final resultado = await db.query('receitas'); // nome da sua tabela
-    // setState(() {
-    //   receitas = resultado;
-    //   carregando = false;
-    // });
-    // print(receitas);
+    receitas = await db.query('receitas');
+    carregando = false;
+    setState(() {});
   }
 
   @override
@@ -60,13 +54,14 @@ class _ListaDeBotoesState extends State<ListaDeBotoes> {
         title: Text('Lista de Receitas'),
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => Addrecipe(),
                 ),
               );
+              setState(() {});
             },
             icon: Icon(Icons.add),
           ),
@@ -74,7 +69,7 @@ class _ListaDeBotoesState extends State<ListaDeBotoes> {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
-        itemCount: titulos.length,
+        itemCount: receitas.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -83,7 +78,8 @@ class _ListaDeBotoesState extends State<ListaDeBotoes> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PaginaGenerica(titulo: titulos[index]),
+                    builder: (_) =>
+                        PaginaGenerica(titulo: receitas[index]['nome']),
                   ),
                 );
               },
@@ -120,7 +116,7 @@ class _ListaDeBotoesState extends State<ListaDeBotoes> {
                           Padding(
                             padding: EdgeInsets.only(top: 25, right: 12),
                             child: Text(
-                              titulos[index],
+                              receitas[index]['nome'],
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,

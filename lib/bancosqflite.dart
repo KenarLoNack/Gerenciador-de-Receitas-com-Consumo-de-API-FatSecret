@@ -47,6 +47,7 @@ class BancoHelper {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               nome TEXT NOT NULL,
               tempo TEXT,
+              porcoes TEXT,
               imagem TEXT,
               favorito INTEGER DEFAULT 0
             )
@@ -111,5 +112,26 @@ class BancoHelper {
       'acucares_total': acuTot,
       'acucares_adicionados': acucarAdic,
     });
+  }
+
+  Future<void> inserirReceitas(String nome, String tempo, String porcoes,
+      String imagempath, List<Map<String, dynamic>> ingredientes) async {
+    final db = await database;
+
+    // Inserir a receita e obter o ID gerado automaticamente
+    final int receitaId = await db.insert('receitas', {
+      'nome': nome,
+      'tempo': tempo,
+      'porcoes': porcoes,
+      'imagem': imagempath,
+    });
+
+    for (final ingred in ingredientes) {
+      await db.insert('receitas_ingredientes', {
+        'receita_id': receitaId,
+        'ingrediente_id': ingred['id'],
+        'quantidade': ingred['quantidade']
+      });
+    }
   }
 }
