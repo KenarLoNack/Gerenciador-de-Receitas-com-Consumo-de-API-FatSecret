@@ -3,6 +3,9 @@ import 'package:recipes_app_api/bancosqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'createingredient.dart';
 
+//variavel global para persistencia de dados
+List<Map<String, dynamic>> selecionados = [];
+
 class Addingredient extends StatefulWidget {
   const Addingredient({super.key});
 
@@ -13,11 +16,10 @@ class Addingredient extends StatefulWidget {
 class _AddingredientState extends State<Addingredient> {
   late Database db;
   List<Map<String, dynamic>> ingredientes = [];
-  List<Map<String, dynamic>> selecionados = [];
   Map<int, TextEditingController> quantidadeControllers = {};
   Map<int, String> unidadesSelecionadas = {};
 
-  final List<String> opcoesUnidade = ['g', 'ml', 'colher', 'xícara'];
+  final List<String> opcoesUnidade = [' g', ' ml', ' colher', ' xícara'];
 
   @override
   void initState() {
@@ -102,7 +104,11 @@ class _AddingredientState extends State<Addingredient> {
                           onChanged: (bool? value) {
                             setState(() {
                               if (value == true) {
-                                selecionados.add(ingrediente);
+                                selecionados.add({
+                                  ...ingrediente,
+                                  'quantidade': '',
+                                  'unidade': opcoesUnidade.first,
+                                });
                                 quantidadeControllers[id] =
                                     TextEditingController();
                                 unidadesSelecionadas[id] = opcoesUnidade.first;
@@ -194,11 +200,7 @@ class _AddingredientState extends State<Addingredient> {
                   right: 30,
                   child: ElevatedButton(
                       onPressed: () {
-                        if (selecionados.isNotEmpty) {
-                          Navigator.pop(context, selecionados);
-                        } else {
-                          Navigator.pop(context, <Map<String, dynamic>>[]);
-                        }
+                        Navigator.pop(context);
                       },
                       child: Icon(Icons.check)),
                 ),

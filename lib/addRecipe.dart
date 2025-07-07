@@ -219,71 +219,87 @@ class _AddrecipeState extends State<Addrecipe> {
                     //lista de ingredientes
 
                     Container(
-                      height: 100,
-                      padding: EdgeInsets.symmetric(horizontal: 15),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(width: 1, color: Colors.black),
                       ),
-                      child: Row(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Material(
-                              color: Colors.transparent,
-                              clipBehavior: Clip.hardEdge,
-                              child: ingredientes.isEmpty
-                                  ? Center(
-                                      child: Text(
-                                        "Adicionar ingredientes",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    )
-                                  : ListView.builder(
-                                      itemCount: ingredientes.length,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(ingredientes[index]
-                                                    ['nome']),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  ingredientes[index]
-                                                          ['quantidade'] +
-                                                      Text(ingredientes[index]
-                                                          ['unidade']),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
+                          Container(
+                            height: 40,
+                            color: Colors.grey,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 15),
+                                    child: Text(
+                                      "Adicionar ingredientes",
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
                                     ),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => Addingredient(),
+                                      ),
+                                    );
+                                    setState(() {});
+                                  },
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          IconButton(
-                            onPressed: () async {
-                              final List<Map<String, dynamic>> selectedIng =
-                                  await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => Addingredient(),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxHeight: 150),
+                            child: Expanded(
+                              child: Material(
+                                color: Colors.transparent,
+                                clipBehavior: Clip.hardEdge,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: ListView.builder(
+                                    itemCount: selecionados.length,
+                                    itemBuilder: (context, index) {
+                                      return Expanded(
+                                        flex: 3,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              selecionados[index]['nome'],
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              selecionados[index]
+                                                      ['quantidade'] +
+                                                  selecionados[index]
+                                                      ['unidade'],
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              );
-
-                              if (selectedIng.isNotEmpty) {
-                                setState(() {
-                                  ingredientes = selectedIng;
-                                });
-                              }
-                            },
-                            icon: Icon(Icons.add),
+                              ),
+                            ),
                           ),
                         ],
                       ),
