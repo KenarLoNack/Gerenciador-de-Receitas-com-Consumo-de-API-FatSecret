@@ -57,7 +57,9 @@ class BancoHelper {
             CREATE TABLE ingredientes (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               nome TEXT NOT NULL,
-              calorias REALNOT NULL ,
+              porcao REAL NOT NULL,
+              unidade REAL NOT NULL,
+              calorias REAL NOT NULL ,
               carboidratos REAL,
               proteinas REAL,
               gorduras_total REAL,

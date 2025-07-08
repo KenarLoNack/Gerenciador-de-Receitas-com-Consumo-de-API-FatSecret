@@ -18,6 +18,10 @@ class _CreateingredientState extends State<Createingredient> {
 
   final TextEditingController nome = TextEditingController();
 
+  final TextEditingController porcao = TextEditingController();
+
+  final List<String> medida = ['g', 'ml', 'Unidade'];
+
   final TextEditingController calorias = TextEditingController();
 
   final TextEditingController carboidratos = TextEditingController();
@@ -37,6 +41,7 @@ class _CreateingredientState extends State<Createingredient> {
   final TextEditingController acucaresTotal = TextEditingController();
 
   final TextEditingController acucaresAdicionados = TextEditingController();
+  String? valorSelecionado;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +89,42 @@ class _CreateingredientState extends State<Createingredient> {
                     }
                     return null;
                   },
+                ),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: porcao,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Porcao',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        hint: Text("Selecione uma unidade"),
+                        value: valorSelecionado,
+                        onChanged: (String? novoValor) {
+                          setState(() {
+                            valorSelecionado = novoValor;
+                          });
+                        },
+                        items: medida.map((String opcao) {
+                          return DropdownMenuItem<String>(
+                            value: opcao,
+                            child: Text(opcao),
+                          );
+                        }).toList(),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 16),
                 TextFormField(
